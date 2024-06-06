@@ -2,6 +2,8 @@
 
 Given a [Kaplan-Meier](https://en.wikipedia.org/wiki/Kaplan%E2%80%93Meier_estimator) survival curve, draw for time of death given survival to date.
 
+Context: I have an agent based model of disease transmission which is initialized with a number of living agents. Since the model can run for several decades, it is necessary to remove agents when they reach their date of non-disease death to appropriately model the population. Drawing from a uniform distribution [0 ... max simulation age] isn't right (would I just keep drawing until I get a date of death in the future?) and drawing from [current age ... max simulation age] isn't correct either. Here I am working backwards from the life table from the CDC to create a function letting me draw for a date of death given the agent's current age (>0 during initialization and 0 for newborns during the simulation).
+
 See `date_of_death.py` for the code.
 
 See `explore.ipynb` for a notebook exploring the code a little.
