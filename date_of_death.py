@@ -16,24 +16,73 @@ cumulative_deaths = [
      97882, 100000,
 ]
 
-c = np.array(cumulative_deaths)
+__cdnp = np.array(cumulative_deaths)
 
-def predicted_year_of_death(age, max_year=100):
+
+def predicted_year_of_death(age_years, max_year=100):
+    """
+    Calculates the predicted year of death based on the given age in years.
+
+    Parameters:
+    - age_years (int): The age of the individual in years.
+    - max_year (int): The maximum year to consider for calculating the predicted year of death. Default is 100.
+
+    Returns:
+    - yod (int): The predicted year of death.
+
+    Example:
+    >>> predicted_year_of_death(40, max_year=80)
+    62
+    """
+
     # e.g., max_year == 10, 884 deaths are recorded in the first 10 years
-    total_deaths = c[max_year+1]
+    total_deaths = __cdnp[max_year + 1]
     # account for current age, i.e., agent is already 4 years old, so 792 deaths have already occurred
-    already_deceased = c[age]
+    already_deceased = __cdnp[age_years]
     # this agent will be one of the deaths in (already_deceased, total_deaths] == [already_deceased+1, total_deaths+1)
-    draw = np.random.randint(already_deceased+1, total_deaths+1)
+    draw = np.random.randint(already_deceased + 1, total_deaths + 1)
     # find the year of death, e.g., draw == 733, searchsorted("left") will return 2, so the year of death is 1
-    yod = np.searchsorted(c, draw, side="left") - 1
+    yod = np.searchsorted(__cdnp, draw, side="left") - 1
 
     return yod
 
-def predicted_day_of_death(age, max_year=100):
-    yod = predicted_year_of_death(age, max_year)
-    # the agent will die sometime in the year of death, so we randomly select a day
-    doy = np.random.randint(365)    # 0 <= doy < 365
+
+def predicted_day_of_death(age_days, max_year=100):
+    """
+    Calculates the predicted day of death based on the given age in days and the maximum year of death.
+
+    Parameters:
+    - age_days (int): The age in days.
+    - max_year (int): The maximum year of death. Defaults to 100.
+
+    Returns:
+    - dod (int): The predicted day of death.
+
+    The function first calculates the predicted year of death based on the given age in days and the maximum year of death.
+    Then, it randomly selects a day within the year of death.
+    The age/date of death has to be greater than today's age.
+    Finally, it calculates and returns the predicted day of death.
+
+    Note: This function assumes that there are 365 days in a year.
+    """
+
+    yod = predicted_year_of_death(age_days // 365, max_year)
+
+    # if the death age year is not the current age year pick any day that year
+    if age_days // 365 < yod:
+        # the agent will die sometime in the year of death, so we randomly select a day
+        doy = np.random.randint(365)
+    else:
+        # the agent will die on or before next birthday
+        age_doy = age_days % 365  # 0 ... 364
+        if age_doy < 364:
+            # there is time before the next birthday, pick a day at random
+            doy = np.random.randint(age_doy + 1, 365)
+        else:
+            # the agent's birthday is tomorrow; bummer of a birthday present
+            yod += 1
+            doy = 0
+
     dod = yod * 365 + doy
 
     return dod
