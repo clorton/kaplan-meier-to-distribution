@@ -2,6 +2,10 @@
 
 Given a [Kaplan-Meier](https://en.wikipedia.org/wiki/Kaplan%E2%80%93Meier_estimator) survival curve, draw for time of death given survival to date.
 
+See `date_of_death.py` for the code.
+
+See `explore.ipynb` for a notebook exploring the code a little.
+
 ## Sources
 
 - [Life Table - Wikipedia](https://en.wikipedia.org/wiki/Life_table)
